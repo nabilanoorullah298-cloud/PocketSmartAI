@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}History{% endblock %}
+{% block content %}
+<h2>Your history</h2>
+<section class="panel">
+  {% if items %}
+  <table class="list">
+    <tr><th>Date</th><th>Planner</th><th>Budget</th><th>Needs</th><th></th></tr>
+    {% for item in items %}
+    <tr>
+      <td>{{ item.created_at }}</td>
+      <td>{{ planners[item.kind]['title'] }}</td>
+      <td>₹{{ item.budget }}</td>
+      <td>{{ item.details[:60] }}</td>
+      <td><a href="/history/{{ item.id }}">View</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p>No saved recommendations yet.</p>
+  {% endif %}
+</section>
+{% endblock %}

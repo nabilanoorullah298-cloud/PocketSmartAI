@@ -1,6 +1,6 @@
 * { box-sizing: border-box; }
 body { margin: 0; font-family: Arial, sans-serif; background: #f4f6fb; color: #222; }
-nav { display: flex; justify-content: space-between; align-items: center; padding: 14px 24px; background: #1f2a5a; }
+nav { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; padding: 14px 24px; background: #1f2a5a; }
 nav a { color: #fff; text-decoration: none; margin-left: 16px; }
 nav .brand { font-weight: bold; font-size: 1.2rem; margin: 0; }
 main { max-width: 900px; margin: 24px auto; padding: 0 16px; }
@@ -9,10 +9,12 @@ main { max-width: 900px; margin: 24px auto; padding: 0 16px; }
 .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
 .card { background: #fff; padding: 20px; border-radius: 12px; text-decoration: none; color: inherit; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
 .panel { background: #fff; padding: 20px; border-radius: 12px; margin-top: 16px; box-shadow: 0 2px 8px rgba(0,0,0,.08); }
+.auth-box { max-width: 420px; margin: 24px auto; }
 label { display: block; margin: 12px 0 6px; font-weight: bold; }
 input, textarea { width: 100%; padding: 10px; border: 1px solid #ccd; border-radius: 8px; font-size: 1rem; }
 textarea { min-height: 80px; }
 form .btn { margin-top: 16px; }
 .error { color: #c0392b; }
-.result table { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
-.result th, .result td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+.success { color: #1e8449; }
+.result table, table.list { border-collapse: collapse; width: 100%; overflow-x: auto; display: block; }
+.result th, .result td, table.list th, table.list td { border: 1px solid #ddd; padding: 8px; text-align: left; }

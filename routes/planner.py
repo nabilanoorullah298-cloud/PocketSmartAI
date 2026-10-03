@@ -1,7 +1,8 @@
-import markdown
 from fastapi import APIRouter, Form, HTTPException, Request
 from fastapi.responses import HTMLResponse
 
+import database
+from auth_utils import get_current_user, login_redirect
 from services.gemini_service import get_recommendations
 from templating import templates
 
@@ -43,6 +44,8 @@ def render(request, kind, budget="", details="", preferences="", result=None, er
 def planner_page(request: Request, kind: str):
     if kind not in PLANNERS:
         raise HTTPException(status_code=404, detail="Planner not found")
+    if not get_current_user(request):
+        return login_redirect()
     return render(request, kind)
 
 
@@ -56,9 +59,12 @@ def planner_submit(
 ):
     if kind not in PLANNERS:
         raise HTTPException(status_code=404, detail="Planner not found")
+    user = get_current_user(request)
+    if not user:
+        return login_redirect()
     text = get_recommendations(kind, budget, details, preferences)
     if text:
-        html = markdown.markdown(text, extensions=["tables"])
-        return render(request, kind, budget, details, preferences, result=html)
+        database.add_history(user["id"], kind, budget, details, preferences, text)
+        return render(request, kind, budget, details, preferences, result=text)
     error = "Google's server is busy right now. Please try again in a minute."
     return render(request, kind, budget, details, preferences, error=error)

@@ -12,5 +12,5 @@
   <button class="btn" type="submit">Generate Recommendations</button>
 </form>
 {% if error %}<p class="error">{{ error }}</p>{% endif %}
-{% if result %}<section class="panel result">{{ result|safe }}</section>{% endif %}
+{% if result %}<section class="panel result">{{ result|md|safe }}</section>{% endif %}
 {% endblock %}

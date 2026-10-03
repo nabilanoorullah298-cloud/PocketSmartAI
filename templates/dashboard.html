@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h2>Welcome, {{ user.username }} 👋</h2>
+<section class="cards">
+  <a class="card" href="/planner/home"><h3>🏠 Home Interior Planner</h3><p>Start planning</p></a>
+  <a class="card" href="/planner/party"><h3>🎉 Party Planner</h3><p>Start planning</p></a>
+  <a class="card" href="/planner/jewelry"><h3>💍 Jewelry Planner</h3><p>Start planning</p></a>
+</section>
+<section class="panel">
+  <h3>Recent recommendations</h3>
+  {% if recent %}
+  <table class="list">
+    <tr><th>Date</th><th>Planner</th><th>Budget</th><th></th></tr>
+    {% for item in recent %}
+    <tr>
+      <td>{{ item.created_at }}</td>
+      <td>{{ planners[item.kind]['title'] }}</td>
+      <td>₹{{ item.budget }}</td>
+      <td><a href="/history/{{ item.id }}">View</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+  <p><a href="/history">See all history</a></p>
+  {% else %}
+  <p>Nothing yet. Pick a planner above to get your first recommendation.</p>
+  {% endif %}
+</section>
+{% endblock %}
