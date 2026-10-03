@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Form, HTTPException, Request
+from typing import Optional
+
+from fastapi import APIRouter, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import HTMLResponse
 
 import database
@@ -7,6 +9,9 @@ from services.gemini_service import get_recommendations
 from templating import templates
 
 router = APIRouter()
+
+ALLOWED_IMAGES = {"image/jpeg", "image/png", "image/webp"}
+MAX_IMAGE_BYTES = 5 * 1024 * 1024
 
 PLANNERS = {
     "home": {
@@ -56,15 +61,34 @@ def planner_submit(
     budget: int = Form(...),
     details: str = Form(...),
     preferences: str = Form(""),
+    image: Optional[UploadFile] = File(None),
 ):
     if kind not in PLANNERS:
         raise HTTPException(status_code=404, detail="Planner not found")
     user = get_current_user(request)
     if not user:
         return login_redirect()
-    text = get_recommendations(kind, budget, details, preferences)
+
+    image_bytes = None
+    mime_type = None
+    if kind == "jewelry" and image is not None and image.filename:
+        if image.content_type not in ALLOWED_IMAGES:
+            return render(
+                request, kind, budget, details, preferences,
+                error="Please upload a JPG, PNG or WEBP image.",
+            )
+        image_bytes = image.file.read(MAX_IMAGE_BYTES + 1)
+        if len(image_bytes) > MAX_IMAGE_BYTES:
+            return render(
+                request, kind, budget, details, preferences,
+                error="Image is too large. Please use one under 5 MB.",
+            )
+        mime_type = image.content_type
+
+    text = get_recommendations(kind, budget, details, preferences, image_bytes, mime_type)
     if text:
-        database.add_history(user["id"], kind, budget, details, preferences, text)
+        saved_details = details + (" (with reference image)" if image_bytes else "")
+        database.add_history(user["id"], kind, budget, saved_details, preferences, text)
         return render(request, kind, budget, details, preferences, result=text)
     error = "Google's server is busy right now. Please try again in a minute."
     return render(request, kind, budget, details, preferences, error=error)
