@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}{{ planner.title }}{% endblock %}
+{% block content %}
+<h2>{{ planner.title }}</h2>
+<form method="post" class="panel">
+  <label>Total budget (₹)</label>
+  <input type="number" name="budget" min="1" value="{{ budget }}" required>
+  <label>What do you need?</label>
+  <textarea name="details" placeholder="{{ planner.hint }}" required>{{ details }}</textarea>
+  <label>Preferences (optional)</label>
+  <textarea name="preferences" placeholder="Style, colours, brands...">{{ preferences }}</textarea>
+  <button class="btn" type="submit">Generate Recommendations</button>
+</form>
+{% if error %}<p class="error">{{ error }}</p>{% endif %}
+{% if result %}<section class="panel result">{{ result|safe }}</section>{% endif %}
+{% endblock %}
